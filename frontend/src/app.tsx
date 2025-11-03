@@ -1,34 +1,25 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import { useAuth } from './contexts/AuthContext';
+import LoginRegister from './components/LoginRegister';
+import TaskDashboard from './components/TaskDashboard';
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
-
-function App() {
-  const [users, setUsers] = useState<User[]>([]);
+const App: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+  const [page, setPage] = useState<'login' | 'dashboard'>(isAuthenticated ? 'dashboard' : 'login');
 
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/`)
-      .then((res) => setUsers(res.data.users))
-      .catch((err) => console.error(err));
-  }, []);
+    setPage(isAuthenticated ? 'dashboard' : 'login');
+  }, [isAuthenticated]);
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>🚀 React + TypeScript + Nest + Prisma + PostgreSQL + Docker</h1>
-      <ul>
-        {users.map((u) => (
-          <li key={u.id}>
-            {u.name} ({u.email})
-          </li>
-        ))}
-      </ul>
+    <div className="App min-h-screen font-sans">
+      {page === 'login' ? (
+        <LoginRegister onSuccess={() => setPage('dashboard')} />
+      ) : (
+        <TaskDashboard />
+      )}
     </div>
   );
-}
+};
 
 export default App;

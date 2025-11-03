@@ -1,0 +1,3 @@
+docker compose exec app npx sequelize-cli db:migrate
+
+//sirve para correr las migraciones
